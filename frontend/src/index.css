@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base-primary: #fecdd3; /* Rose 200 - Pastel Red */
+  --color-base-text: #881337;   /* Rose 900 */
+  --color-base-accent: #f43f5e; /* Rose 500 */
+
+  --color-jaime-primary: #fed7aa; /* Orange 200 - Pastel Orange */
+  --color-jaime-text: #7c2d12;   /* Orange 900 */
+  --color-jaime-accent: #f97316; /* Orange 500 */
+
+  --color-maia-primary: #e9d5ff; /* Purple 200 - Pastel Lavender */
+  --color-maia-text: #4c1d95;   /* Purple 900 */
+  --color-maia-accent: #a855f7; /* Purple 500 */
+}
+
+:root {
+  --bg-color: #fecdd3;
+  --text-color: #881337;
+  --accent-color: #f43f5e;
+  --pattern-color: rgba(244, 63, 94, 0.15);
+  --box-bg: rgba(255, 255, 255, 0.75);
+  --border-color: rgba(255, 255, 255, 0.5);
+}
+
+.theme-jaime {
+  --bg-color: #fed7aa;
+  --text-color: #7c2d12;
+  --accent-color: #f97316;
+  --pattern-color: rgba(249, 115, 22, 0.15);
+  --box-bg: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(255, 255, 255, 0.6);
+}
+
+.theme-maialen {
+  --bg-color: #e9d5ff;
+  --text-color: #4c1d95;
+  --accent-color: #a855f7;
+  --pattern-color: rgba(168, 85, 247, 0.15);
+  --box-bg: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(255, 255, 255, 0.6);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.8s ease, color 0.8s ease;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+@keyframes slidePattern {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 400px 400px;
+  }
+}
+
+/* We will use a generated SVG for the pattern that integrates the custom dog and heart */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/pattern-svg.svg');
+  background-size: 200px 200px;
+  background-repeat: repeat;
+  opacity: 0.2;
+  z-index: -1;
+  pointer-events: none;
+  /* El blend mode hace que tome el color oscuro relativo al fondo pastel */
+  mix-blend-mode: color-burn;
+  /* Animación súper suave y lenta para modernidad */
+  animation: slidePattern 60s linear infinite;
+  transition: opacity 0.8s ease;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--box-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 1.5rem;
+}
+
+/* Smooth buttons */
+.btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.1);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-color);
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--pattern-color);
+}
+
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px) scale(0.99);
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 100ms, transform 100ms ease-out;
+}
