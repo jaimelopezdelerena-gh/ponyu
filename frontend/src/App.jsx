@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import MemoriesPage from './pages/MemoriesPage';
 import GiftsPage from './pages/GiftsPage';
 import PlansPage from './pages/PlansPage';
+import ConfigPage from './pages/ConfigPage';
 
 // Component to protect routes that require a selected profile
 const ProtectedRoute = ({ children }) => {
@@ -53,6 +54,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PlansPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/config" 
+            element={
+              <ProtectedRoute>
+                <ConfigPage />
               </ProtectedRoute>
             } 
           />

@@ -85,6 +85,15 @@ app.get('/api/memories', async (req, res) => {
   }
 });
 
+app.delete('/api/memories/:id', async (req, res) => {
+  try {
+    await Memory.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Memory deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Rutas - Gifts
 app.post('/api/gifts', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
   try {
@@ -114,6 +123,15 @@ app.get('/api/gifts', async (req, res) => {
   }
 });
 
+app.delete('/api/gifts/:id', async (req, res) => {
+  try {
+    await Gift.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Gift deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Rutas - Plans
 app.post('/api/plans', async (req, res) => {
   try {
@@ -129,6 +147,15 @@ app.get('/api/plans', async (req, res) => {
   try {
     const plans = await Plan.find().sort({ date: 1 });
     res.json(plans);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/plans/:id', async (req, res) => {
+  try {
+    await Plan.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Plan deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

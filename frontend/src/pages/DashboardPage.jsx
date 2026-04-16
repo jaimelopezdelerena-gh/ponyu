@@ -36,15 +36,23 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-4 page-transition-enter-active">
       <div className="w-full max-w-5xl flex justify-between items-center mb-12">
-        <h1 className="text-4xl font-bold flex items-center gap-3">
-          ¡Hola {user === 'jaime' ? 'Jaime' : 'Maialen'}!
+        <h1 className="text-4xl font-bold flex items-center gap-3 capitalize">
+          ¡Hola {user}!
         </h1>
-        <button 
-          onClick={handleLogout}
-          className="glass-panel px-4 py-2 flex items-center gap-2 hover:bg-white/50 transition-colors"
-        >
-          <FaSignOutAlt /> Salir
-        </button>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => navigate('/config')}
+            className="glass-panel px-4 py-2 flex items-center gap-2 hover:bg-white/50 transition-colors font-bold"
+          >
+            ⚙️ Ajustes
+          </button>
+          <button 
+            onClick={handleLogout}
+            className="glass-panel px-4 py-2 flex items-center gap-2 hover:bg-white/50 transition-colors"
+          >
+            <FaSignOutAlt /> Salir
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl z-10">
