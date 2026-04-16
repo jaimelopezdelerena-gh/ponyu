@@ -130,7 +130,7 @@ const PlansPage = () => {
                 🗓 {new Date(plan.date).toLocaleDateString()}
               </p>
               <p className="opacity-90">{plan.description}</p>
-              <div className="mt-4 text-xs font-semibold text-[var(--accent-color)] opacity-80">
+              <div className="mt-4 text-xs font-semibold text-[var(--accent-color)] opacity-80 capitalize">
                 Propuesto por {plan.creator}
               </div>
             </div>

@@ -33,6 +33,7 @@ const MemoriesPage = () => {
   const [loading, setLoading] = useState(false);
   const [filterCat, setFilterCat] = useState('Todos');
   const [placeholder, setPlaceholder] = useState(RANDOM_PLACEHOLDERS[0]);
+  const [selectedMemory, setSelectedMemory] = useState(null);
   
   // Form state
   const [title, setTitle] = useState('');
@@ -255,11 +256,15 @@ const MemoriesPage = () => {
         )}
 
         {/* List of Memories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredMemories.map((mem) => (
-            <div key={mem._id} className="glass-panel overflow-hidden group flex flex-col">
+            <div 
+              key={mem._id} 
+              onClick={() => setSelectedMemory(mem)}
+              className="glass-panel overflow-hidden group flex flex-col cursor-pointer transform transition-transform hover:-translate-y-1 hover:shadow-2xl"
+            >
               {mem.coverPhoto && (
-                <div className="h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${mem.coverPhoto.startsWith('data:') ? mem.coverPhoto : `${API_URL}/uploads/${mem.coverPhoto}`})` }}>
+                <div className="h-56 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${mem.coverPhoto.startsWith('data:') ? mem.coverPhoto : `${API_URL}/uploads/${mem.coverPhoto}`})` }}>
                   {mem.category && (
                      <div className={`absolute top-4 right-4 ${CATEGORIES[mem.category]?.color || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg`}>
                        {CATEGORIES[mem.category]?.label || mem.category}
@@ -272,15 +277,21 @@ const MemoriesPage = () => {
                   )}
                 </div>
               )}
-              <div className="p-6 flex-1 flex flex-col">
-                <h3 className="text-2xl font-bold mb-2">{mem.title}</h3>
-                <p className="text-sm opacity-70 mb-4 font-mono">
-                  {new Date(mem.startDate).toLocaleDateString()}
-                  {mem.endDate && ` - ${new Date(mem.endDate).toLocaleDateString()}`}
-                </p>
-                <p className="opacity-90 flex-1">{mem.description}</p>
-                <div className="mt-4 text-sm font-semibold text-[var(--accent-color)]">
-                  Subido por {mem.creator}
+              <div className="p-5 flex-1 flex flex-col justify-between bg-white/40">
+                <div>
+                  <h3 className="text-xl font-bold mb-1 truncate">{mem.title}</h3>
+                  <p className="text-xs font-semibold text-gray-500 font-mono">
+                    {new Date(mem.startDate).toLocaleDateString()}
+                    {mem.endDate && ` - ${new Date(mem.endDate).toLocaleDateString()}`}
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent-color)]">
+                    Leer más
+                  </span>
+                  <span className="text-xs font-bold text-gray-400 capitalize">
+                    {mem.creator}
+                  </span>
                 </div>
               </div>
             </div>
@@ -289,6 +300,58 @@ const MemoriesPage = () => {
             <p className="opacity-70 col-span-full">Aún no hay recuerdos guardados en esta categoría.</p>
           )}
         </div>
+
+        {/* Detalles del Recuerdo Modal */}
+        {selectedMemory && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setSelectedMemory(null)}>
+            <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setSelectedMemory(null)} className="absolute top-4 right-4 bg-white/80 hover:bg-white text-black w-8 h-8 rounded-full flex items-center justify-center font-bold shadow z-10 transition">
+                ✕
+              </button>
+              
+              {selectedMemory.coverPhoto && (
+                <div className="h-80 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${selectedMemory.coverPhoto.startsWith('data:') ? selectedMemory.coverPhoto : `${API_URL}/uploads/${selectedMemory.coverPhoto}`})` }}>
+                  {selectedMemory.category && (
+                     <div className={`absolute top-4 left-4 ${CATEGORIES[selectedMemory.category]?.color || 'bg-gray-500'} text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg`}>
+                       {CATEGORIES[selectedMemory.category]?.label || selectedMemory.category}
+                     </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="p-8">
+                <div className="mb-6">
+                  <h2 className="text-4xl font-bold mb-2">{selectedMemory.title}</h2>
+                  <div className="flex items-center gap-4 text-sm font-semibold text-gray-500 font-mono">
+                    <span>
+                      {new Date(selectedMemory.startDate).toLocaleDateString()}
+                      {selectedMemory.endDate && ` - ${new Date(selectedMemory.endDate).toLocaleDateString()}`}
+                    </span>
+                    <span>•</span>
+                    <span className="capitalize text-[var(--accent-color)]">Subido por {selectedMemory.creator}</span>
+                  </div>
+                </div>
+                
+                <p className="text-gray-800 leading-relaxed mb-8 whitespace-pre-wrap text-lg">
+                  {selectedMemory.description}
+                </p>
+
+                {selectedMemory.photos && selectedMemory.photos.length > 0 && (
+                  <div>
+                    <h4 className="text-xl font-bold mb-4 border-b pb-2">Galería de Fotos</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {selectedMemory.photos.map((photoStr, idx) => (
+                        <div key={idx} className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow">
+                          <img src={photoStr.startsWith('data:') ? photoStr : `${API_URL}/uploads/${photoStr}`} alt={`Extra foto ${idx+1}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 cursor-pointer" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -155,7 +155,7 @@ const GiftsPage = () => {
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">{item.title}</h3>
                 <p className="opacity-90">{item.description}</p>
-                <div className="mt-4 text-xs font-semibold text-gray-500">
+                <div className="mt-4 text-xs font-semibold text-gray-500 capitalize">
                   Subido por {item.creator}
                 </div>
               </div>
