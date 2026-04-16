@@ -62,10 +62,10 @@ const Plan = mongoose.model('Plan', planSchema);
 app.post('/api/memories', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
   try {
     const memoryData = { ...req.body };
-    if (req.files['coverPhoto']) {
+    if (req.files && req.files['coverPhoto']) {
       memoryData.coverPhoto = fileToBase64(req.files['coverPhoto'][0]);
     }
-    if (req.files['photos']) {
+    if (req.files && req.files['photos']) {
       memoryData.photos = req.files['photos'].map(fileToBase64);
     }
     const memory = new Memory(memoryData);
@@ -89,10 +89,10 @@ app.get('/api/memories', async (req, res) => {
 app.post('/api/gifts', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
   try {
     const giftData = { ...req.body };
-    if (req.files['coverPhoto']) {
+    if (req.files && req.files['coverPhoto']) {
       giftData.coverPhoto = fileToBase64(req.files['coverPhoto'][0]);
     }
-    if (req.files['photos']) {
+    if (req.files && req.files['photos']) {
       giftData.photos = req.files['photos'].map(fileToBase64);
     }
     const gift = new Gift(giftData);

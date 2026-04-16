@@ -203,19 +203,42 @@ const MemoriesPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-1">Foto de Portada</label>
-                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center hover:bg-white/30 transition cursor-pointer h-24 flex flex-col justify-center">
-                  <input type="file" required accept="image/*" onChange={(e) => setCoverPhoto(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                  <FaCamera className="text-2xl mx-auto mb-1 opacity-50" />
-                  <span className="opacity-70 text-sm truncate px-2">{coverPhoto ? coverPhoto.name : 'Subir Portada'}</span>
+                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center hover:bg-white/30 transition cursor-pointer h-32 flex flex-col justify-center overflow-hidden">
+                  <input type="file" required accept="image/*" onChange={(e) => setCoverPhoto(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                  {coverPhoto ? (
+                    <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <>
+                      <FaCamera className="text-2xl mx-auto mb-1 opacity-50" />
+                      <span className="opacity-70 text-sm truncate px-2">Subir Portada</span>
+                    </>
+                  )}
                 </div>
               </div>
               
               <div>
                 <label className="block text-sm font-semibold mb-1">Fotos adicionales (opcional)</label>
-                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center hover:bg-white/30 transition cursor-pointer h-24 flex flex-col justify-center">
-                  <input type="file" multiple accept="image/*" onChange={(e) => setExtraPhotos(e.target.files)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                  <FaCamera className="text-2xl mx-auto mb-1 opacity-50" />
-                  <span className="opacity-70 text-sm truncate px-2">{extraPhotos.length > 0 ? `${extraPhotos.length} foto(s) seleccionadas` : 'Subir más fotos'}</span>
+                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center hover:bg-white/30 transition cursor-pointer h-32 flex flex-col justify-center overflow-hidden">
+                  <input type="file" multiple accept="image/*" onChange={(e) => setExtraPhotos(Array.from(e.target.files))} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                  {extraPhotos && extraPhotos.length > 0 ? (
+                    <div className="absolute inset-0 grid grid-cols-2 gap-1 p-1 bg-white/20">
+                      {extraPhotos.slice(0,4).map((f, i) => (
+                        <div key={i} className="relative w-full h-full overflow-hidden rounded-md">
+                          <img src={URL.createObjectURL(f)} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+                          {i === 3 && extraPhotos.length > 4 && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold">
+                              +{extraPhotos.length - 4}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <FaCamera className="text-2xl mx-auto mb-1 opacity-50" />
+                      <span className="opacity-70 text-sm truncate px-2">Subir más fotos</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
