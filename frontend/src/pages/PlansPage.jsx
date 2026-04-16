@@ -156,6 +156,7 @@ const PlansPage = () => {
                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent-color)]">Detalles</span>
                  <span className="text-xs font-semibold text-gray-500 capitalize">Por {plan.creator}</span>
               </div>
+             </div>
             </div>
           ))}
           {plans.length === 0 && !showForm && (
