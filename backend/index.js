@@ -31,7 +31,8 @@ const memorySchema = new mongoose.Schema({
   startDate: Date,
   endDate: Date,
   creator: String,
-  category: String,
+  category: String, // Retrocompatibilidad
+  categories: [String], // Array moderno
   createdAt: { type: Date, default: Date.now }
 });
 const Memory = mongoose.model('Memory', memorySchema);
@@ -54,6 +55,8 @@ const planSchema = new mongoose.Schema({
   date: Date,
   estimatedBudget: Number,
   creator: String,
+  coverPhoto: String,
+  photos: [String],
   createdAt: { type: Date, default: Date.now }
 });
 const Plan = mongoose.model('Plan', planSchema);
@@ -62,6 +65,9 @@ const Plan = mongoose.model('Plan', planSchema);
 app.post('/api/memories', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
   try {
     const memoryData = { ...req.body };
+    if (req.body.categories) {
+      try { memoryData.categories = JSON.parse(req.body.categories); } catch (e) { memoryData.categories = []; }
+    }
     if (req.files && req.files['coverPhoto']) {
       memoryData.coverPhoto = fileToBase64(req.files['coverPhoto'][0]);
     }
@@ -73,6 +79,25 @@ app.post('/api/memories', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { 
     res.status(201).json(memory);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/memories/:id', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
+  try {
+    const memoryData = { ...req.body };
+    if (req.body.categories) {
+      try { memoryData.categories = JSON.parse(req.body.categories); } catch (e) { memoryData.categories = []; }
+    }
+    if (req.files && req.files['coverPhoto']) {
+      memoryData.coverPhoto = fileToBase64(req.files['coverPhoto'][0]);
+    }
+    if (req.files && req.files['photos']) {
+      memoryData.photos = req.files['photos'].map(fileToBase64);
+    }
+    const updated = await Memory.findByIdAndUpdate(req.params.id, memoryData, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -133,9 +158,16 @@ app.delete('/api/gifts/:id', async (req, res) => {
 });
 
 // Rutas - Plans
-app.post('/api/plans', async (req, res) => {
+app.post('/api/plans', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
   try {
-    const plan = new Plan(req.body);
+    const planData = { ...req.body };
+    if (req.files && req.files['coverPhoto']) {
+      planData.coverPhoto = fileToBase64(req.files['coverPhoto'][0]);
+    }
+    if (req.files && req.files['photos']) {
+      planData.photos = req.files['photos'].map(fileToBase64);
+    }
+    const plan = new Plan(planData);
     await plan.save();
     res.status(201).json(plan);
   } catch (error) {

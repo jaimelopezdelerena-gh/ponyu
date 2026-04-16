@@ -69,14 +69,13 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('/pattern-svg.svg');
-  background-size: 200px 200px;
+  background-image: url('/pattern-clean.png');
+  background-size: 300px 300px;
   background-repeat: repeat;
-  opacity: 0.2;
+  opacity: 0.15;
   z-index: -1;
   pointer-events: none;
-  /* El blend mode hace que tome el color oscuro relativo al fondo pastel */
-  mix-blend-mode: color-burn;
+  mix-blend-mode: overlay;
   /* Animación súper suave y lenta para modernidad */
   animation: slidePattern 60s linear infinite;
   transition: opacity 0.8s ease;

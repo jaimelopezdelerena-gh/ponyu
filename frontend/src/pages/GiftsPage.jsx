@@ -20,6 +20,10 @@ const GiftsPage = () => {
   const [selectedGift, setSelectedGift] = useState(null);
   
   const isGiver = user === activeTab; // Si Jaime está en "De Jaime", él da. Si Maialen en "De Maialen", ella da.
+  
+  const colorClassBg = activeTab === 'maialen' ? 'bg-[#a855f7]' : 'bg-[var(--accent-color)]';
+  const colorClassBorder = activeTab === 'maialen' ? 'border-l-[#a855f7]' : 'border-l-[var(--accent-color)]';
+  const colorClassText = activeTab === 'maialen' ? 'text-[#a855f7]' : 'text-[var(--accent-color)]';
 
   useEffect(() => {
     fetchGifts();
@@ -119,7 +123,7 @@ const GiftsPage = () => {
               <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center hover:bg-white/30 transition cursor-pointer h-32 flex flex-col justify-center overflow-hidden">
                 <input type="file" accept="image/*" onChange={(e) => setCoverPhoto(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                 {coverPhoto ? (
-                  <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-cover" />
+                  <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-contain bg-black/5" />
                 ) : (
                   <>
                     <FaCamera className="text-2xl mx-auto mb-1 opacity-50" />
@@ -146,20 +150,19 @@ const GiftsPage = () => {
             <div 
               key={item._id} 
               onClick={() => setSelectedGift(item)}
-              className={`${item.isClue ? 'bg-white/80 p-6 rounded-3xl rounded-tl-none shadow-xl border-l-[6px] border-l-[var(--accent-color)] relative' : 'glass-panel overflow-hidden relative border-2 border-transparent hover:border-[var(--accent-color)]'} cursor-pointer transform transition-transform hover:-translate-y-1`}
+              className={`${item.isClue ? `bg-white/80 p-6 rounded-3xl rounded-tl-none shadow-xl border-l-[6px] ${colorClassBorder} relative` : 'glass-panel overflow-hidden relative border-2 border-transparent hover:border-[var(--accent-color)]'} cursor-pointer transform transition-transform hover:-translate-y-1`}
             >
               {item.isClue ? (
                 <>
-                  <div className="absolute top-4 right-4 bg-[var(--accent-color)] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
-                    <FaSearch /> PISTA 🤫
+                  <div className={`absolute top-4 right-4 ${colorClassBg} text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg`}>
+                    PISTA
                   </div>
-                  <h3 className="text-xl font-bold mb-2 pr-20">{item.title}</h3>
-                  <div className="mt-4 text-xs font-semibold text-gray-500 capitalize">De {item.creator}</div>
+                  <h3 className="text-xl font-bold pr-20">{item.title}</h3>
                 </>
               ) : (
                 <>
                   {item.coverPhoto && (
-                    <div className="h-48 w-full bg-cover bg-center" style={{ backgroundImage: `url(${item.coverPhoto.startsWith('data:') ? item.coverPhoto : `${API_URL}/uploads/${item.coverPhoto}`})` }}></div>
+                    <div className="h-48 w-full bg-contain bg-center bg-no-repeat bg-black/5" style={{ backgroundImage: `url(${item.coverPhoto.startsWith('data:') ? item.coverPhoto : `${API_URL}/uploads/${item.coverPhoto}`})` }}></div>
                    )}
                    <div className="p-6">
                      <h3 className="text-xl font-bold mb-2 truncate">{item.title}</h3>
@@ -180,16 +183,16 @@ const GiftsPage = () => {
         {/* Detalles del Regalo / Pista Modal */}
         {selectedGift && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setSelectedGift(null)}>
-            <div className={`bg-white rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl relative ${selectedGift.isClue ? 'border-8 border-[var(--accent-color)]' : ''}`} onClick={e => e.stopPropagation()}>
+            <div className={`bg-white rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl relative ${selectedGift.isClue ? `border-8 ${colorClassBorder}` : ''}`} onClick={e => e.stopPropagation()}>
               <button onClick={() => setSelectedGift(null)} className="absolute top-4 right-4 bg-black/20 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow z-10 transition">
                 ✕
               </button>
               
               {selectedGift.coverPhoto && (
-                <div className="h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${selectedGift.coverPhoto.startsWith('data:') ? selectedGift.coverPhoto : `${API_URL}/uploads/${selectedGift.coverPhoto}`})` }}>
+                <div className="h-64 w-full bg-contain bg-center bg-no-repeat bg-black/10 relative" style={{ backgroundImage: `url(${selectedGift.coverPhoto.startsWith('data:') ? selectedGift.coverPhoto : `${API_URL}/uploads/${selectedGift.coverPhoto}`})` }}>
                   {selectedGift.isClue && (
-                     <div className="absolute top-4 left-4 bg-[var(--accent-color)] text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
-                       <FaSearch /> PISTA MISTERIOSA
+                     <div className={`absolute top-4 left-4 ${colorClassBg} text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-2`}>
+                       PISTA
                      </div>
                   )}
                 </div>
@@ -198,9 +201,11 @@ const GiftsPage = () => {
               <div className="p-8">
                 <div className="mb-6">
                   <h2 className="text-3xl font-bold mb-2">{selectedGift.title}</h2>
-                  <div className="text-sm font-semibold capitalize text-[var(--accent-color)]">
-                    {selectedGift.isClue ? 'Una pista dejada por ' : 'Subido en secreto por '} {selectedGift.creator}
-                  </div>
+                  {!selectedGift.isClue && (
+                    <div className={`text-sm font-semibold capitalize ${colorClassText}`}>
+                      Subido en secreto por {selectedGift.creator}
+                    </div>
+                  )}
                 </div>
                 
                 <p className="text-gray-800 leading-relaxed whitespace-pre-wrap text-lg bg-gray-50 p-6 rounded-xl border border-gray-100">

@@ -40,8 +40,7 @@ const MemoriesPage = () => {
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [category, setCategory] = useState('Nosotros');
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [categories, setCategories] = useState(['Nosotros']);
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [extraPhotos, setExtraPhotos] = useState([]);
 
@@ -77,7 +76,7 @@ const MemoriesPage = () => {
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
     formData.append('creator', user);
-    formData.append('category', category);
+    formData.append('categories', JSON.stringify(categories));
     if (coverPhoto) formData.append('coverPhoto', coverPhoto);
     if (extraPhotos) {
       for (let i = 0; i < extraPhotos.length; i++) {
@@ -96,7 +95,7 @@ const MemoriesPage = () => {
         setDescription('');
         setStartDate('');
         setEndDate('');
-        setCategory('Nosotros');
+        setCategories(['Nosotros']);
         setCoverPhoto(null);
         setExtraPhotos([]);
         fetchMemories();
@@ -107,7 +106,7 @@ const MemoriesPage = () => {
     setLoading(false);
   };
 
-  const filteredMemories = filterCat === 'Todos' ? memories : memories.filter(m => m.category === filterCat);
+  const filteredMemories = filterCat === 'Todos' ? memories : memories.filter(m => m.categories?.includes(filterCat) || m.category === filterCat);
 
   return (
     <div className="min-h-screen flex flex-col p-8 page-transition-enter-active">
@@ -161,32 +160,27 @@ const MemoriesPage = () => {
                 <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="input-field" placeholder={placeholder} />
               </div>
               <div className="relative">
-                <label className="block text-sm font-semibold mb-1">Categoría</label>
-                <div 
-                  onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                  className="input-field cursor-pointer flex justify-between items-center bg-white hover:border-[var(--accent-color)] transition"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={`w-3 h-3 rounded-full ${CATEGORIES[category]?.color || 'bg-gray-500'}`}></span>
-                    <span className="font-semibold">{CATEGORIES[category]?.label || category}</span>
-                  </div>
-                  <span className={`text-gray-400 transform transition-transform ${showCategoryDropdown ? 'rotate-180' : ''}`}>▼</span>
+                <label className="block text-sm font-semibold mb-1">Categorías</label>
+                <div className="flex flex-wrap gap-2">
+                  {Object.keys(CATEGORIES).map(cat => (
+                    <button 
+                      type="button"
+                      key={cat}
+                      onClick={() => {
+                          if (categories.includes(cat)) {
+                              if (categories.length > 1) {
+                                  setCategories(categories.filter(c => c !== cat));
+                              }
+                          } else {
+                              setCategories([...categories, cat]);
+                          }
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-sm font-bold transition flex items-center gap-2 ${categories.includes(cat) ? CATEGORIES[cat].color + ' text-white ring-2 ring-[var(--accent-color)]' : 'bg-white/60 text-gray-600 hover:bg-white border text-opacity-80'}`}
+                    >
+                      {CATEGORIES[cat].label}
+                    </button>
+                  ))}
                 </div>
-                
-                {showCategoryDropdown && (
-                  <div className="absolute z-20 top-full left-0 mt-2 w-full bg-white border border-[var(--border-color)] rounded-xl shadow-2xl overflow-hidden animate-fade-in">
-                    {Object.keys(CATEGORIES).map(cat => (
-                      <div 
-                        key={cat}
-                        onClick={() => { setCategory(cat); setShowCategoryDropdown(false); }}
-                        className={`p-4 cursor-pointer flex items-center gap-3 transition-colors hover:bg-gray-50 ${category === cat ? 'bg-gray-100' : ''}`}
-                      >
-                        <span className={`w-3 h-3 rounded-full ${CATEGORIES[cat].color}`}></span>
-                        <span className="font-semibold">{CATEGORIES[cat].label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 
@@ -207,7 +201,7 @@ const MemoriesPage = () => {
                 <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center hover:bg-white/30 transition cursor-pointer h-32 flex flex-col justify-center overflow-hidden">
                   <input type="file" required accept="image/*" onChange={(e) => setCoverPhoto(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                   {coverPhoto ? (
-                    <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-contain bg-black/5" />
                   ) : (
                     <>
                       <FaCamera className="text-2xl mx-auto mb-1 opacity-50" />
@@ -225,7 +219,7 @@ const MemoriesPage = () => {
                     <div className="absolute inset-0 grid grid-cols-2 gap-1 p-1 bg-white/20">
                       {extraPhotos.slice(0,4).map((f, i) => (
                         <div key={i} className="relative w-full h-full overflow-hidden rounded-md">
-                          <img src={URL.createObjectURL(f)} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+                          <img src={URL.createObjectURL(f)} alt="Preview" className="absolute inset-0 w-full h-full object-contain bg-black/10" />
                           {i === 3 && extraPhotos.length > 4 && (
                             <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold">
                               +{extraPhotos.length - 4}
@@ -264,10 +258,14 @@ const MemoriesPage = () => {
               className="glass-panel overflow-hidden group flex flex-col cursor-pointer transform transition-transform hover:-translate-y-1 hover:shadow-2xl"
             >
               {mem.coverPhoto && (
-                <div className="h-56 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${mem.coverPhoto.startsWith('data:') ? mem.coverPhoto : `${API_URL}/uploads/${mem.coverPhoto}`})` }}>
-                  {mem.category && (
-                     <div className={`absolute top-4 right-4 ${CATEGORIES[mem.category]?.color || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg`}>
-                       {CATEGORIES[mem.category]?.label || mem.category}
+                <div className="h-56 w-full bg-contain bg-center bg-no-repeat bg-black/5 relative" style={{ backgroundImage: `url(${mem.coverPhoto.startsWith('data:') ? mem.coverPhoto : `${API_URL}/uploads/${mem.coverPhoto}`})` }}>
+                  {(mem.categories || (mem.category ? [mem.category] : [])).length > 0 && (
+                     <div className={`absolute top-4 right-4 flex flex-col gap-1`}>
+                       {(mem.categories || (mem.category ? [mem.category] : [])).map(c => (
+                         <span key={c} className={`${CATEGORIES[c]?.color || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg`}>
+                           {CATEGORIES[c]?.label || c}
+                         </span>
+                       ))}
                      </div>
                   )}
                   {mem.photos && mem.photos.length > 0 && (
@@ -310,10 +308,14 @@ const MemoriesPage = () => {
               </button>
               
               {selectedMemory.coverPhoto && (
-                <div className="h-80 w-full bg-cover bg-center relative" style={{ backgroundImage: `url(${selectedMemory.coverPhoto.startsWith('data:') ? selectedMemory.coverPhoto : `${API_URL}/uploads/${selectedMemory.coverPhoto}`})` }}>
-                  {selectedMemory.category && (
-                     <div className={`absolute top-4 left-4 ${CATEGORIES[selectedMemory.category]?.color || 'bg-gray-500'} text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg`}>
-                       {CATEGORIES[selectedMemory.category]?.label || selectedMemory.category}
+                <div className="h-80 w-full bg-contain bg-center bg-no-repeat bg-black/10 relative" style={{ backgroundImage: `url(${selectedMemory.coverPhoto.startsWith('data:') ? selectedMemory.coverPhoto : `${API_URL}/uploads/${selectedMemory.coverPhoto}`})` }}>
+                  {(selectedMemory.categories || (selectedMemory.category ? [selectedMemory.category] : [])).length > 0 && (
+                     <div className={`absolute top-4 left-4 flex gap-2`}>
+                       {(selectedMemory.categories || (selectedMemory.category ? [selectedMemory.category] : [])).map(c => (
+                         <span key={c} className={`${CATEGORIES[c]?.color || 'bg-gray-500'} text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg`}>
+                           {CATEGORIES[c]?.label || c}
+                         </span>
+                       ))}
                      </div>
                   )}
                 </div>
@@ -342,7 +344,7 @@ const MemoriesPage = () => {
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       {selectedMemory.photos.map((photoStr, idx) => (
                         <div key={idx} className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow">
-                          <img src={photoStr.startsWith('data:') ? photoStr : `${API_URL}/uploads/${photoStr}`} alt={`Extra foto ${idx+1}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 cursor-pointer" />
+                          <img src={photoStr.startsWith('data:') ? photoStr : `${API_URL}/uploads/${photoStr}`} alt={`Extra foto ${idx+1}`} className="w-full h-full object-contain bg-black/5 hover:scale-110 transition-transform duration-500 cursor-pointer" />
                         </div>
                       ))}
                     </div>

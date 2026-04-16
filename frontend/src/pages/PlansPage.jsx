@@ -18,6 +18,7 @@ const PlansPage = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [estimatedBudget, setEstimatedBudget] = useState('');
+  const [coverPhoto, setCoverPhoto] = useState(null);
 
   useEffect(() => {
     fetchPlans();
@@ -37,19 +38,18 @@ const PlansPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    const payload = {
-      title,
-      description,
-      date,
-      estimatedBudget: Number(estimatedBudget),
-      creator: user
-    };
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('date', date);
+    formData.append('estimatedBudget', Number(estimatedBudget));
+    formData.append('creator', user);
+    if (coverPhoto) formData.append('coverPhoto', coverPhoto);
 
     try {
       const res = await fetch(`${API_URL}/api/plans`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: formData,
       });
       if (res.ok) {
         setShowForm(false);
@@ -57,6 +57,7 @@ const PlansPage = () => {
         setDescription('');
         setDate('');
         setEstimatedBudget('');
+        setCoverPhoto(null);
         fetchPlans();
       }
     } catch (err) {
@@ -101,9 +102,22 @@ const PlansPage = () => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold mb-1">Fecha aproximada</label>
-              <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className="input-field w-full md:w-1/2" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Fecha aproximada</label>
+                <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className="input-field" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Foto de Destino (opcional)</label>
+                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-3 text-center hover:bg-white/30 transition cursor-pointer h-16 flex flex-col justify-center overflow-hidden">
+                  <input type="file" accept="image/*" onChange={(e) => setCoverPhoto(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                  {coverPhoto ? (
+                    <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-contain bg-black/5" />
+                  ) : (
+                    <span className="opacity-70 text-sm truncate px-2">📷 Subir imagen</span>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div>
@@ -123,9 +137,13 @@ const PlansPage = () => {
             <div 
               key={plan._id} 
               onClick={() => setSelectedPlan(plan)}
-              className="glass-panel p-6 border-l-4 border-l-[var(--accent-color)] hover:-translate-y-1 transition-transform cursor-pointer"
+              className="glass-panel overflow-hidden border-l-4 border-l-[var(--accent-color)] hover:-translate-y-1 transition-transform cursor-pointer relative"
             >
-              <div className="flex justify-between items-start mb-2">
+              {plan.coverPhoto && (
+                 <div className="h-32 w-full bg-contain bg-center bg-no-repeat bg-black/5" style={{ backgroundImage: `url(${plan.coverPhoto.startsWith('data:') ? plan.coverPhoto : `${API_URL}/uploads/${plan.coverPhoto}`})` }}></div>
+              )}
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-2">
                 <h3 className="text-xl font-bold truncate pr-4">{plan.title}</h3>
                 <span className="font-mono bg-[var(--accent-color)] text-white px-2 py-1 rounded-md text-sm shadow">
                   ~ {plan.estimatedBudget} €
@@ -154,6 +172,9 @@ const PlansPage = () => {
               </button>
               
               <div className="p-8">
+                {selectedPlan.coverPhoto && (
+                  <div className="h-64 w-full rounded-xl overflow-hidden mb-6 bg-contain bg-center bg-no-repeat bg-black/10" style={{ backgroundImage: `url(${selectedPlan.coverPhoto.startsWith('data:') ? selectedPlan.coverPhoto : `${API_URL}/uploads/${selectedPlan.coverPhoto}`})` }}></div>
+                )}
                 <div className="mb-6 border-b pb-4">
                   <h2 className="text-3xl font-bold mb-3 pr-8">{selectedPlan.title}</h2>
                   <div className="flex items-center gap-4 text-sm font-semibold text-gray-500 font-mono">
