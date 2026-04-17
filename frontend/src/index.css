@@ -48,9 +48,14 @@ body {
   color: var(--text-color);
   transition: background-color 0.8s ease, color 0.8s ease;
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport for mobile browsers */
   position: relative;
   overflow-x: hidden;
 }
+
+/* Ensure theme transitions work on all devices including mobile */
+.theme-jaime { background-color: var(--bg-color); color: var(--text-color); }
+.theme-maialen { background-color: var(--bg-color); color: var(--text-color); }
 
 @keyframes breathPattern {
   0% {
@@ -166,6 +171,16 @@ body::after {
   textarea,
   select {
     font-size: 16px !important;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  /* Date inputs specifically — prevent overflow */
+  input[type="date"] {
+    width: 100%;
+    min-width: 0;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   /* Smaller glasspanel padding on mobile */

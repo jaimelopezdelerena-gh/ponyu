@@ -18,11 +18,11 @@ const SelectionPage = () => {
         <h1
           className="mb-5 drop-shadow-md"
           style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: 'clamp(2.8rem, 10vw, 5.5rem)',
-            fontWeight: 900,
+            fontFamily: "'Dancing Script', cursive",
+            fontSize: 'clamp(3rem, 12vw, 6rem)',
+            fontWeight: 700,
             lineHeight: 1.1,
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.01em',
           }}
         >
           Nuestras Cositas
