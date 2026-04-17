@@ -101,7 +101,7 @@ const DashboardPage = () => {
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-xs font-bold uppercase tracking-widest text-pink-400">Especial</span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold" style={{ color: '#be185d' }}>1er Aniversario</h2>
+                <h2 className="text-xl md:text-2xl font-bold" style={{ color: '#be185d' }}>Primer Aniversario</h2>
               </div>
             </div>
             <div

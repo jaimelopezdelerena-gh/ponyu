@@ -15,8 +15,17 @@ const SelectionPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden page-transition-enter-active">
       {/* Title */}
       <div className="z-10 text-center max-w-lg w-full mb-14">
-        <h1 className="text-5xl md:text-7xl font-bold mb-5 drop-shadow-md">
-          Nuestras Cositas 💗
+        <h1
+          className="mb-5 drop-shadow-md"
+          style={{
+            fontFamily: "'Dancing Script', cursive",
+            fontSize: 'clamp(3rem, 12vw, 6rem)',
+            fontWeight: 700,
+            lineHeight: 1.1,
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Nuestras Cositas
         </h1>
         <p className="text-lg md:text-xl opacity-75 font-semibold tracking-wide">¿Quién eres?</p>
       </div>

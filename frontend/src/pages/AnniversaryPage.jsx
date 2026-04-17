@@ -76,7 +76,7 @@ const AnniversaryPage = () => {
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-3 mb-3">
             <FaHeart className="text-3xl text-pink-500 animate-pulse" />
-            <h1 className="text-4xl md:text-5xl font-bold">1er Aniversario</h1>
+            <h1 className="text-4xl md:text-5xl font-bold">Primer Aniversario</h1>
             <FaHeart className="text-3xl text-pink-500 animate-pulse" />
           </div>
           {user === 'jaime' && (
