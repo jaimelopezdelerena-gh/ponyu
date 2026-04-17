@@ -9,6 +9,7 @@ import MemoriesPage from './pages/MemoriesPage';
 import GiftsPage from './pages/GiftsPage';
 import PlansPage from './pages/PlansPage';
 import ConfigPage from './pages/ConfigPage';
+import AnniversaryPage from './pages/AnniversaryPage';
 
 // Component to protect routes that require a selected profile
 const ProtectedRoute = ({ children }) => {
@@ -62,6 +63,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ConfigPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/aniversario" 
+            element={
+              <ProtectedRoute>
+                <AnniversaryPage />
               </ProtectedRoute>
             } 
           />

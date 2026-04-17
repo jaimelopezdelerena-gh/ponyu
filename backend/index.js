@@ -62,6 +62,12 @@ const planSchema = new mongoose.Schema({
 });
 const Plan = mongoose.model('Plan', planSchema);
 
+const anniversarySchema = new mongoose.Schema({
+  text: { type: String, default: '' },
+  updatedAt: { type: Date, default: Date.now }
+});
+const Anniversary = mongoose.model('Anniversary', anniversarySchema);
+
 // Rutas - Memories
 app.post('/api/memories', upload.fields([{ name: 'coverPhoto', maxCount: 1 }, { name: 'photos', maxCount: 10 }]), async (req, res) => {
   try {
@@ -189,6 +195,30 @@ app.delete('/api/plans/:id', async (req, res) => {
   try {
     await Plan.findByIdAndDelete(req.params.id);
     res.json({ message: 'Plan deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rutas - Anniversary
+app.get('/api/anniversary', async (req, res) => {
+  try {
+    let doc = await Anniversary.findOne();
+    if (!doc) doc = await Anniversary.create({ text: '' });
+    res.json(doc);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/anniversary', async (req, res) => {
+  try {
+    let doc = await Anniversary.findOne();
+    if (!doc) doc = new Anniversary({});
+    doc.text = req.body.text || '';
+    doc.updatedAt = new Date();
+    await doc.save();
+    res.json(doc);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
