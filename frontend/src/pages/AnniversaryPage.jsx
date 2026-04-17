@@ -80,9 +80,9 @@ const AnniversaryPage = () => {
             <FaHeart className="text-3xl text-pink-500 animate-pulse" />
           </div>
           <p className="text-lg opacity-70 font-medium">
-            {isJaime
+            {user === 'jaime'
               ? 'Este espacio es tuyo, Jaime. Escríbele algo bonito a Maialen.'
-              : 'Jaime tiene algo que decirte 💌'}
+              : '???'}
           </p>
         </div>
 
@@ -180,10 +180,7 @@ const AnniversaryPage = () => {
                 {savedText === '' ? (
                   <div className="text-center py-16">
                     <div className="text-6xl mb-6">💌</div>
-                    <p className="text-xl font-semibold opacity-70">
-                      Jaime aún está escribiendo algo para ti...
-                    </p>
-                    <p className="text-sm opacity-50 mt-2">Vuelve pronto 🌸</p>
+                    <p className="text-xl font-semibold opacity-70">???</p>
                   </div>
                 ) : (
                   <div>

@@ -102,9 +102,6 @@ const DashboardPage = () => {
                   <span className="text-xs font-bold uppercase tracking-widest text-pink-400">Especial</span>
                 </div>
                 <h2 className="text-xl md:text-2xl font-bold" style={{ color: '#be185d' }}>1er Aniversario</h2>
-                <p className="text-sm opacity-70 mt-0.5" style={{ color: '#9d174d' }}>
-                  {user === 'jaime' ? 'Tu espacio para escribirle a Maialen.' : 'Jaime tiene algo preparado para ti 💌'}
-                </p>
               </div>
             </div>
             <div
