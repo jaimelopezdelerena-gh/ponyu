@@ -79,11 +79,11 @@ const AnniversaryPage = () => {
             <h1 className="text-4xl md:text-5xl font-bold">1er Aniversario</h1>
             <FaHeart className="text-3xl text-pink-500 animate-pulse" />
           </div>
-          <p className="text-lg opacity-70 font-medium">
-            {user === 'jaime'
-              ? 'Este espacio es tuyo, Jaime. Escríbele algo bonito a Maialen.'
-              : '???'}
-          </p>
+          {user === 'jaime' && (
+            <p className="text-lg opacity-70 font-medium">
+              Este espacio es tuyo, Jaime. Escríbele algo bonito a Maialen.
+            </p>
+          )}
         </div>
 
         {loading ? (
