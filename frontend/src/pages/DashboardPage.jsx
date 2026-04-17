@@ -59,7 +59,7 @@ const DashboardPage = () => {
             onClick={() => navigate('/config')}
             className="glass-panel px-4 py-2 flex items-center gap-2 hover:bg-white/50 transition-colors font-bold"
           >
-            ⚙️ Ajustes
+            Ajustes
           </button>
           <button 
             onClick={handleLogout}
