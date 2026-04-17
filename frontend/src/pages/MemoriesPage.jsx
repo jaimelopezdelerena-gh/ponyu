@@ -31,6 +31,7 @@ const MemoriesPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [filterCat, setFilterCat] = useState('Todos');
+  const [sortOrder, setSortOrder] = useState('newest');
   const [placeholder, setPlaceholder] = useState(RANDOM_PLACEHOLDERS[0]);
   const [selectedMemory, setSelectedMemory] = useState(null);
   
@@ -106,6 +107,13 @@ const MemoriesPage = () => {
   };
 
   const filteredMemories = filterCat === 'Todos' ? memories : memories.filter(m => m.categories?.includes(filterCat) || m.category === filterCat);
+  
+  const sortedMemories = [...filteredMemories].sort((a, b) => {
+    const dateA = new Date(a.startDate || a.date || a.createdAt);
+    const dateB = new Date(b.startDate || b.date || b.createdAt);
+    if (sortOrder === 'newest') return dateB - dateA;
+    return dateA - dateB;
+  });
 
   return (
     <div className="min-h-screen flex flex-col p-8 page-transition-enter-active">
@@ -127,25 +135,39 @@ const MemoriesPage = () => {
           </button>
         </div>
 
-        {/* Categorías de filtrado */}
+        {/* Categorías de filtrado y Ordenación */}
         {!showForm && (
-          <div className="glass-panel p-4 mb-8 flex flex-wrap gap-2 items-center justify-center">
-            <span className="font-bold mr-2"><FaFilter className="inline" /> Filtrar:</span>
-            <button 
-              onClick={() => setFilterCat('Todos')}
-              className={`px-4 py-1 rounded-full text-sm font-bold transition ${filterCat === 'Todos' ? 'bg-black text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
-            >
-              Todos
-            </button>
-            {Object.keys(CATEGORIES).map(cat => (
+          <div className="glass-panel p-4 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-wrap gap-2 items-center justify-center">
+              <span className="font-bold mr-2"><FaFilter className="inline" /> Filtrar:</span>
               <button 
-                key={cat}
-                onClick={() => setFilterCat(cat)}
-                className={`px-4 py-1 rounded-full text-sm font-bold transition text-white ${CATEGORIES[cat].color} ${filterCat === cat ? 'ring-4 ring-offset-2 ring-[var(--accent-color)]' : 'opacity-80 hover:opacity-100'}`}
+                onClick={() => setFilterCat('Todos')}
+                className={`px-4 py-1 rounded-full text-sm font-bold transition ${filterCat === 'Todos' ? 'bg-black text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
               >
-                {CATEGORIES[cat].label}
+                Todos
               </button>
-            ))}
+              {Object.keys(CATEGORIES).map(cat => (
+                <button 
+                  key={cat}
+                  onClick={() => setFilterCat(cat)}
+                  className={`px-4 py-1 rounded-full text-sm font-bold transition text-white ${CATEGORIES[cat].color} ${filterCat === cat ? 'ring-4 ring-offset-2 ring-[var(--accent-color)]' : 'opacity-80 hover:opacity-100'}`}
+                >
+                  {CATEGORIES[cat].label}
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-sm">Ordenar por fechas:</span>
+              <select 
+                value={sortOrder} 
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="input-field py-1 px-3 text-sm font-bold outline-none cursor-pointer bg-white"
+              >
+                <option value="newest">Más nuevo primero</option>
+                <option value="oldest">Más antiguo primero</option>
+              </select>
+            </div>
           </div>
         )}
 
@@ -250,7 +272,7 @@ const MemoriesPage = () => {
 
         {/* List of Memories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredMemories.map((mem) => (
+          {sortedMemories.map((mem) => (
             <div 
               key={mem._id} 
               onClick={() => setSelectedMemory(mem)}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaBookOpen, FaGift, FaPlane, FaSignOutAlt } from 'react-icons/fa';
+import { FaBookOpen, FaGift, FaPlane, FaSignOutAlt, FaHeart } from 'react-icons/fa';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -11,6 +11,11 @@ const DashboardPage = () => {
     logout();
     navigate('/');
   };
+
+  const engagementDate = new Date('2025-04-20T00:00:00');
+  const today = new Date();
+  const diffTime = Math.abs(today - engagementDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   const options = [
     {
@@ -35,10 +40,20 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-12 px-4 page-transition-enter-active">
-      <div className="w-full max-w-5xl flex justify-between items-center mb-12">
-        <h1 className="text-4xl font-bold flex items-center gap-3 capitalize">
-          ¡Hola {user}!
-        </h1>
+      {/* Top Bar Area */}
+      <div className="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+        <div>
+          <h1 className="text-4xl font-bold flex items-center gap-3 capitalize mb-2">
+            ¡Hola {user}!
+          </h1>
+          <div className="inline-block bg-white/40 px-4 py-1.5 rounded-full border border-white/50 shadow-sm backdrop-blur-md">
+            <span className="font-bold text-gray-700 tracking-wide text-sm flex items-center gap-2">
+              <FaHeart className="text-pink-500" />
+              Días juntos: <span className="text-[var(--accent-color)]">{diffDays}</span>
+            </span>
+          </div>
+        </div>
+        
         <div className="flex gap-4">
           <button 
             onClick={() => navigate('/config')}

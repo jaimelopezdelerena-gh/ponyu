@@ -107,7 +107,7 @@ const ConfigPage = () => {
           <FaArrowLeft /> Volver
         </button>
         
-        <h1 className="text-4xl font-bold mb-8">⚙️ Configuración y Gestión</h1>
+        <h1 className="text-4xl font-bold mb-8">Configuración y Gestión</h1>
         
         {loading ? (
           <div className="text-center py-12"><FaSpinner className="animate-spin text-4xl mx-auto text-[var(--accent-color)]" /></div>
@@ -139,7 +139,7 @@ const ConfigPage = () => {
                 {gifts.map(g => (
                   <div key={g._id} className="flex justify-between items-center bg-white/40 p-3 rounded-lg hover:bg-white/60 transition">
                     <div>
-                      <span className="font-bold">{g.title} {g.isClue && '🔍 (Pista)'}</span> <span className="text-sm opacity-70">({g.creator})</span>
+                      <span className="font-bold">{g.title} {g.isClue && '(Pista)'}</span> <span className="text-sm opacity-70">({g.creator})</span>
                     </div>
                     {g.creator === user && (
                       <button onClick={() => handleDelete('gifts', g._id)} className="text-red-500 hover:text-red-700 bg-red-100 p-2 rounded-md transition"><FaTrash /></button>
@@ -174,7 +174,7 @@ const ConfigPage = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setEditingMemory(null)}>
             <div className="bg-white rounded-3xl w-full max-w-xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
               <div className="p-8">
-                <h2 className="text-3xl font-bold mb-6">✏️ Editar Recuerdo</h2>
+                <h2 className="text-3xl font-bold mb-6">Editar Recuerdo</h2>
                 <form onSubmit={handleSaveEdit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold mb-1">Título</label>
