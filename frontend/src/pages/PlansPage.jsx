@@ -16,9 +16,11 @@ const PlansPage = () => {
   // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [estimatedBudget, setEstimatedBudget] = useState('');
   const [coverPhoto, setCoverPhoto] = useState(null);
+  const [extraPhotos, setExtraPhotos] = useState([]);
 
   useEffect(() => {
     fetchPlans();
@@ -41,10 +43,16 @@ const PlansPage = () => {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('date', date);
+    formData.append('startDate', startDate);
+    formData.append('endDate', endDate);
     formData.append('estimatedBudget', Number(estimatedBudget));
     formData.append('creator', user);
     if (coverPhoto) formData.append('coverPhoto', coverPhoto);
+    if (extraPhotos && extraPhotos.length > 0) {
+      for (let i = 0; i < extraPhotos.length; i++) {
+        formData.append('photos', extraPhotos[i]);
+      }
+    }
 
     try {
       const res = await fetch(`${API_URL}/api/plans`, {
@@ -55,9 +63,11 @@ const PlansPage = () => {
         setShowForm(false);
         setTitle('');
         setDescription('');
-        setDate('');
+        setStartDate('');
+        setEndDate('');
         setEstimatedBudget('');
         setCoverPhoto(null);
+        setExtraPhotos([]);
         fetchPlans();
       }
     } catch (err) {
@@ -82,7 +92,7 @@ const PlansPage = () => {
             onClick={() => setShowForm(!showForm)}
             className="btn-primary"
           >
-            {showForm ? 'Cerrar Formulario' : <><FaPlus /> Proponer Plan</>}
+            {showForm ? 'Cerrar' : <><FaPlus /> Proponer Plan</>}
           </button>
         </div>
 
@@ -102,19 +112,48 @@ const PlansPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1">Fecha aproximada</label>
-                <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className="input-field" />
+                <label className="block text-sm font-semibold mb-1">Fecha inicio</label>
+                <input type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input-field" />
               </div>
               <div>
+                <label className="block text-sm font-semibold mb-1">Fecha fin (opcional)</label>
+                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="input-field" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
                 <label className="block text-sm font-semibold mb-1">Foto de Destino (opcional)</label>
-                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-3 text-center hover:bg-white/30 transition cursor-pointer h-16 flex flex-col justify-center overflow-hidden">
+                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-3 text-center hover:bg-white/30 transition cursor-pointer h-24 flex flex-col justify-center overflow-hidden">
                   <input type="file" accept="image/*" onChange={(e) => setCoverPhoto(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                   {coverPhoto ? (
                     <img src={URL.createObjectURL(coverPhoto)} alt="Preview Portada" className="absolute inset-0 w-full h-full object-contain bg-black/5" />
                   ) : (
-                    <span className="opacity-70 text-sm truncate px-2">📷 Subir imagen</span>
+                    <span className="opacity-70 text-sm truncate px-2">📷 Subir Portada</span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Fotos adicionales (opcional)</label>
+                <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-xl p-3 text-center hover:bg-white/30 transition cursor-pointer h-24 flex flex-col justify-center overflow-hidden">
+                  <input type="file" multiple accept="image/*" onChange={(e) => setExtraPhotos(Array.from(e.target.files))} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                  {extraPhotos && extraPhotos.length > 0 ? (
+                    <div className="absolute inset-0 grid grid-cols-2 gap-1 p-1 bg-white/20">
+                      {extraPhotos.slice(0,4).map((f, i) => (
+                        <div key={i} className="relative w-full h-full overflow-hidden rounded-md">
+                          <img src={URL.createObjectURL(f)} alt="Preview" className="absolute inset-0 w-full h-full object-contain bg-black/10" />
+                          {i === 3 && extraPhotos.length > 4 && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold">
+                              +{extraPhotos.length - 4}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="opacity-70 text-sm truncate px-2">📷 Más fotos</span>
                   )}
                 </div>
               </div>
@@ -150,7 +189,8 @@ const PlansPage = () => {
                 </span>
               </div>
               <p className="text-sm opacity-70 mb-4 font-mono font-bold">
-                🗓 {new Date(plan.date).toLocaleDateString()}
+                🗓 {new Date(plan.startDate).toLocaleDateString()}
+                {plan.endDate && ` - ${new Date(plan.endDate).toLocaleDateString()}`}
               </p>
               <div className="mt-4 flex items-center justify-between">
                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent-color)]">Detalles</span>
@@ -179,7 +219,10 @@ const PlansPage = () => {
                 <div className="mb-6 border-b pb-4">
                   <h2 className="text-3xl font-bold mb-3 pr-8">{selectedPlan.title}</h2>
                   <div className="flex items-center gap-4 text-sm font-semibold text-gray-500 font-mono">
-                    <span className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-md">🗓 {new Date(selectedPlan.date).toLocaleDateString()}</span>
+                    <span className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-md">
+                      🗓 {new Date(selectedPlan.startDate).toLocaleDateString()}
+                      {selectedPlan.endDate && ` - ${new Date(selectedPlan.endDate).toLocaleDateString()}`}
+                    </span>
                     <span className="flex items-center gap-1 bg-[var(--accent-color)]/10 text-[var(--accent-color)] px-3 py-1 rounded-md">💰 ~ {selectedPlan.estimatedBudget} €</span>
                   </div>
                 </div>
@@ -187,6 +230,19 @@ const PlansPage = () => {
                 <p className="text-gray-800 leading-relaxed whitespace-pre-wrap text-lg mb-8 bg-orange-50 p-6 rounded-xl">
                   {selectedPlan.description}
                 </p>
+
+                {selectedPlan.photos && selectedPlan.photos.length > 0 && (
+                  <div className="mb-8">
+                    <h4 className="text-xl font-bold mb-4 border-b pb-2">Galería</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {selectedPlan.photos.map((photoStr, idx) => (
+                        <div key={idx} className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow">
+                          <img src={photoStr.startsWith('data:') ? photoStr : `${API_URL}/uploads/${photoStr}`} alt={`Extra foto ${idx+1}`} className="w-full h-full object-contain bg-black/5 hover:scale-110 transition-transform duration-500 cursor-pointer" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="text-sm font-semibold capitalize text-gray-400 text-right">
                   Plan propuesto por {selectedPlan.creator}

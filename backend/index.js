@@ -52,7 +52,8 @@ const Gift = mongoose.model('Gift', giftSchema);
 const planSchema = new mongoose.Schema({
   title: String,
   description: String,
-  date: Date,
+  startDate: Date,
+  endDate: Date,
   estimatedBudget: Number,
   creator: String,
   coverPhoto: String,

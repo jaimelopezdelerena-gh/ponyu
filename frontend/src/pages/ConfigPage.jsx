@@ -8,7 +8,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const CATEGORIES = {
   Comida: { color: 'bg-red-500', label: 'Comida' },
   Nosotros: { color: 'bg-pink-500', label: 'Nosotros' },
-  Quedada: { color: 'bg-orange-500', label: 'Quedada' },
   Lugar: { color: 'bg-blue-500', label: 'Lugar' },
   Juego: { color: 'bg-purple-500', label: 'Juego' },
   Otro: { color: 'bg-gray-500', label: 'Otro' }
